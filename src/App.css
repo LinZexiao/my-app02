@@ -1,38 +1,107 @@
-.App {
+@import '~antd/dist/antd.css';
+
+
+
+.code-box-demo {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.ant-layout-header,
+.ant-layout-footer {
+  color: #fff;
+  /* background: #7dbcea; */
+  background: rgb(45, 48, 49);
+
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.ant-layout-sider {
+  color: #fff;
+  line-height: 120px;
+  background: #292a2b;
+  height: 100vh;
+
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.ant-layout-content {
+  min-height: 120px;
+  color: #fff;
+  line-height: 120px;
+  background: rgb(45, 48, 49);
 }
 
-.App-link {
-  color: #61dafb;
+
+
+/* 列表 */
+.ant-list {
+  color: #fff;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.ant-list-item {
+  padding: 5px 10px 5px 10px;
+  margin: 3px;
+}
+
+.ant-list-item-meta-title {
+  color: #fff;
+}
+
+.ant-list-item-action>li {
+  color: rgba(255, 255, 255, 0.671);
+}
+
+/* 折叠面板 */
+.ant-collapse-header {
+  color: #fff;
+}
+
+.ant-collapse-header {
+  color: #fff;
+}
+
+.ant-collapse>.ant-collapse-item>.ant-collapse-header {
+  color: #fff;
+}
+
+
+/* 输入框 */
+
+.ant-input {
+  background: #292a2b00;
+  color: #fff;
+  display: inline;
+}
+
+.ant-input-affix-wrapper {
+  background: #292a2b;
+  border: none;
+
+}
+
+
+/* 自定义  */
+
+.text {
+  color: #fff;
+}
+
+
+.listChoosed {
+  background-color: rgba(255, 255, 255, 0.116);
+}
+
+.listbox:hover {
+  background-color: rgba(255, 255, 255, 0.055);
+}
+
+.itembox {
+  border-radius: 5px;
+  background: rgba(81, 84, 87, 0.548);
+  padding: 5px 10px 5px 10px;
+  margin: 3px;
+}
+
+
+
+.InsideBox {
+  padding: 20px
 }
