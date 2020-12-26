@@ -1,104 +1,87 @@
 
 import './App.css';
 import React, {
-  Component
+  Component, useState
 } from 'react'
 
-import { Layout, Menu, Avatar, List, Divider, Collapse, Input } from 'antd'
 import {
+  Layout, Menu, Avatar, List, Divider, Collapse, Input
+} from 'antd'
 
+import {
   CloseCircleOutlined,
   UserOutlined,
-
 } from '@ant-design/icons';
+
+import { Provider, connect } from 'react-redux'
 
 const { Header, Footer, Sider, Content } = Layout;
 const { Panel } = Collapse;
 
 
-// let listChoosed = 1
-let todoList = [
-  {
-    listName: '每日任务',
-    count: 3,
-    id: 0,
-    items: [
-      {
-        text: "hello",
-        id: 0,
-        check: false
-      },
-      {
-        text: "hello",
-        id: 1,
-        check: false
-      },
-      {
-        text: "hello",
-        id: 2,
-        check: false
-      },
-    ]
-  },
-  {
-    listName: '读书清单',
-    count: 3,
 
-    id: 1,
-    items: [
-      {
-        text: "nihao",
-        id: 0,
-        check: false
-      },
-      {
-        text: "hello",
-        id: 1,
-        check: false
-      },
-      {
-        text: "hello",
-        id: 2,
-        check: false
-      },
-    ]
-  }
-]
-
-
-// 新增事项控件
+// 新增事项 控件
+//dispatch
 function AddItem(props) {
   const style = {
     'margin': '0px 30px 0px 30px',
     'position': 'fixed',
-    'bottom': '20px',
+    'bottom': '40px',
     'width': 'inherit',
     'line-height': '20px',
   }
-
   const inputstyle = {
     'background': 'rgba(81, 84, 87, 0)',
     'line-height': '20px'
   }
 
+  // const [count, setCount] = useState(0)
   return (
-    <div style={style} >
-      <Input bordered={false} size='large' placeholder='Add a new item'></Input>
+    <div style={style}  >
+      <Input bordered={false} size='large' placeholder='Add a new item'
+        onPressEnter={e => {
+          props.dispatch({
+            type: 'add',
+            list: false,
+            text: e.target.defaultValue
+          })
+          e.target.defaultValue = ''
+          console.log("enter:", e);
+        }}
+
+      ></Input>
     </div>
   )
 }
 
 // 事项列表
+// items : 事项的数组
+// dispatch
 function Items(props) {
   return (
     <div>
-      <List dataSource={todoList[1].items}
+      <List dataSource={props.items}
         bordered={false}
         split={false}
         renderItem={item => (
-          <div className='itembox'>
+          <div className='itembox' onClick={(e) => {
+            let action = {
+              type: 'select',
+              list: false,
+              id: item.id
+            }
+            props.dispatch(action)
+          }} >
             <List.Item
-              actions={[<CloseCircleOutlined />]}>
+              actions={[< CloseCircleOutlined onClick={e => {
+                e.stopPropagation()
+                props.dispatch({
+                  type: 'delete',
+                  list: false,
+                  id: item.id
+                })
+              }
+              } />]}>
               <List.Item.Meta
                 title={item.text}
               ></List.Item.Meta>
@@ -111,24 +94,35 @@ function Items(props) {
   )
 }
 
+
 // 清单列表
+// 传入参数：
+// Lists： 列表数组
+// listSeleted：被选中数组序号
+// dispatch
 function Lists(props) {
   return (
     <div>
-      <List dataSource={props.data.Lists}
+      <List dataSource={props.Lists}
         bordered={false}
         split={false}
         renderItem={item => {
           let classname = "listbox"
-          if (item.id == props.data.listSeleted) {
+          if (item.id == props.listSeleted) {
             classname = "listChoosed"
           }
 
           let template = (
             <div className={classname}>
               <List.Item
-                actions={[<text>{item.items.length}</text>]}>
-
+                actions={[<text>{item.items.length}</text>]} onClick={(e) => {
+                  let action = {
+                    type: 'select',
+                    list: true,
+                    id: item.id
+                  }
+                  props.dispatch(action)
+                }}>
                 <List.Item.Meta
                   title={item.listName}
                 ></List.Item.Meta>
@@ -147,6 +141,7 @@ function Lists(props) {
 }
 
 
+// 用户信息页
 function User(props) {
   return (
     <div>
@@ -161,11 +156,6 @@ function User(props) {
 
 
 
-const text = `
-  A dog is a type of domesticated animal.
-  Known for its loyalty and faithfulness,
-  it can be found as a welcome guest in many households across the world.
-`;
 
 
 function App(props) {
@@ -177,7 +167,10 @@ function App(props) {
         <Sider width='300'>
           <div className='InsideBox'>
             <User />
-            <Lists data={props.data} />
+            <Lists Lists={props.data.Lists}
+              listSeleted={props.data.listSeleted.id}
+              dispatch={props.dispatch}
+            />
           </div>
         </Sider>
 
@@ -185,18 +178,22 @@ function App(props) {
         <Content>
           <Layout>
             <Header>
-              清单1
+              <h1>{props.currentList.listName}</h1>
             </Header>
             <Content>
               <Collapse defaultActiveKey={['1']} ghost>
                 <Panel header="待完成列表" key="1">
-                  <Items />
+                  <Items items={props.curUnchecked}
+                    dispatch={props.dispatch}
+                  />
                 </Panel>
                 <Panel header="已完成列表" key="2">
-                  <Items />
+                  <Items items={props.curChecked}
+                    dispatch={props.dispatch}
+                  />
                 </Panel>
               </Collapse>
-              <AddItem />
+              <AddItem dispatch={props.dispatch} />
             </Content>
           </Layout>
         </Content>
@@ -204,7 +201,7 @@ function App(props) {
         {/* 详情栏 */}
         <Sider width='350' >
           <div className='InsideBox'>
-            <Input allowClear value={"itemname"} size='large' bordered={false}>
+            <Input allowClear value={props.currentItem != undefined ? props.currentItem.text : null} size='large' bordered={false}>
             </Input>
           </div>
         </Sider>
